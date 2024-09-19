@@ -1,0 +1,55 @@
+    .materials__content {
+        display: flex;
+        flex-wrap: wrap;
+        position: relative;
+        width: 100%;
+        box-sizing: border-box;
+        align-items: center;
+    }
+
+    .materials__text {
+        line-height: 26px;
+        max-width: 50%;
+        line-height: 1.8;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .materials__title {
+        font-family: Merriweather;
+        font-size: 30px;
+        font-weight: 900;
+        color: #222F33;
+    }
+
+    .Link__button {
+        color: #606B74;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 90px;
+        height: 34px;
+    }
+
+    .image__materials {
+        position: relative;
+        left: 10%; 
+        bottom: 0; 
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        width: auto;
+        height: auto;
+        max-width: 45%;
+    }
+
+    .image__materials img {
+        max-width: 100%; 
+        height: auto;
+    }

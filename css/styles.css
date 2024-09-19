@@ -1,0 +1,13 @@
+@import "main.css";
+@import "headers.css";
+@import "materials.css";
+@import "feature.css";
+@import "footer.css";
+@import "innovative.css";
+
+* {
+    padding: 0;
+    margin:0;
+    box-sizing:border-box;
+
+}

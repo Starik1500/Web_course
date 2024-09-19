@@ -1,0 +1,114 @@
+.header {
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute; 
+    top: 0; 
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 20px;
+}
+
+
+nav ul {
+    display: flex;
+    list-style: none;
+    flex-direction: row;
+    justify-content: flex-end; 
+    align-items: center;
+    margin: 0; 
+    padding: 0;
+}
+
+nav ul li {
+    margin: 0 15px;
+}
+
+nav ul li a {
+    font-size: 16px;
+    display: inline-block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: white;
+    background-color: transparent;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.logo {
+    display: flex;
+    justify-content: flex-start; 
+    align-items: center;
+}
+
+.hero {
+    background: url('../images/Bitmap.jpg') no-repeat center center;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; 
+    color: white;
+    min-height: 800px; 
+    width: 100%;
+}
+
+.hero__text {
+    max-width: 50%;
+    flex-direction: column; 
+    align-items: center; 
+}
+
+.hero__actions {
+    display: flex;
+    gap: 10px;
+}
+
+.watch__text {
+    font-size: 18px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.play__button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.play__button img {
+    display: block;
+    width: 100px;
+    height: auto;
+}
+
+.small__title {
+    font-size: 18px;
+    color: rgb(215, 206, 206);
+}
+
+.large__title {
+    font-size: 38px;
+    color: white;
+    font-family: "Merriweather";
+}
+
+.hero__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+ul.menu li:last-child a {
+    color: #606B74;
+    border-radius: 8px;
+    border: 2px solid #646D70;
+    background-color: white;
+}

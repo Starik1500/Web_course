@@ -1,0 +1,22 @@
+body {
+    font-family: "Rubik";
+    background-color: #FFFFFF;
+    color: #333;
+    font-size: 14px;
+}
+
+a {
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto; /* Центрування контейнера по горизонталі */
+    padding: 0 20px; /* Внутрішні відступи з боків */
+    box-sizing: border-box; /* Включення відступів в ширину контейнера */
+}

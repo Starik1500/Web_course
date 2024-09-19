@@ -1,0 +1,43 @@
+.innovative {
+    background-color: #222F33;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    min-height: 200px; 
+    padding: 72px 0px;
+    box-sizing: border-box;
+}
+
+.innovative__divisions{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.left__part{
+    max-width: 50%; 
+    margin-right: 20px; 
+}
+
+.large__text {
+    font-family: Merriweather;
+    color: white;
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.small__text {
+    color: white;
+    line-height: 1.8;
+    margin-bottom: 10px; 
+}
+
+.right__part{
+    max-width: 50%; 
+}
+
+.right__text {
+    line-height: 1.8;
+    color: white;
+}
