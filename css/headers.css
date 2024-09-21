@@ -176,7 +176,7 @@ ul.menu li:last-child a:hover {
         flex-direction: column;
         align-items: center;
         position: absolute;
-        top: 50px;
+        top: 45px;
         left: 0;
         width: 100%;
         background-color: rgba(96, 107, 116, 0.8);
@@ -264,7 +264,7 @@ ul.menu li:last-child a:hover {
         left: 0;
         width: 100%;
         background-color: rgba(96, 107, 116, 0.9);
-        transition: top 1s;
+        transition: opacity 0.5s ease, transform 0.5s ease, max-height 0.5s ease;
         list-style: none;
         text-align: center;
         margin: 0;
@@ -303,6 +303,9 @@ ul.menu li:last-child a:hover {
         max-width: 100%;
         text-align: center;
         align-items: center; 
+        opacity: 0; 
+        animation: fadeInUp 1s ease-out forwards; 
+        animation-delay: 1s; 
     }
     
     .hero__actions {
