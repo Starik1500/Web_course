@@ -27,4 +27,42 @@ footer a {
     margin: 0 10px;
 }
 
+@media screen and (max-width: 767px) {
+    footer {
+        background-color: #222F33;
+        color: #fff;
+        width: 100%;
+        height: auto;
+        display:flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px 0px;
+    }
+    
+    footer p {
+        display: flex;
+        text-align: center;
+        justify-content: space-between;
+        align-content: space-between;
+        opacity: 0.6;
+        font-size: 14px;
+    }
+
+    footer .center img {
+        display: block;
+        margin: 0 auto; 
+        max-width: 100px; 
+        height: auto;
+    }
+
+    footer a {
+        display: flex;
+        text-align: center;
+        justify-content: center;
+        align-content: center;
+        color: white;
+        text-decoration: none;
+    }
+}
 

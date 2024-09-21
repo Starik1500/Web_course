@@ -41,3 +41,50 @@
     line-height: 1.8;
     color: white;
 }
+
+@media screen and (max-width: 767px) {
+    .innovative {
+        background-color: #222F33;
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        min-height: 200px; 
+        padding: 72px 0px;
+        box-sizing: border-box;
+        text-align: center;
+    }
+    
+    .innovative__divisions{
+        display: inline;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+    
+    .left__part{
+        max-width: 100%; 
+    }
+    
+    .large__text {
+        font-family: Merriweather;
+        color: white;
+        font-size: 30px;
+        margin-bottom: 10px;
+    }
+    
+    .small__text {
+        color: white;
+        line-height: 1.8;
+        margin-bottom: 10px; 
+    }
+    
+    .right__part{
+        max-width: 100%; 
+    }
+    
+    .right__text {
+        line-height: 1.8;
+        color: white;
+    }
+}

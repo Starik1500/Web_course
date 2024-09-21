@@ -16,7 +16,24 @@ a {
     justify-content: center;
     max-width: 1200px;
     width: 100%;
-    margin: 0 auto; /* Центрування контейнера по горизонталі */
-    padding: 0 20px; /* Внутрішні відступи з боків */
-    box-sizing: border-box; /* Включення відступів в ширину контейнера */
+    margin: 0 auto; 
+    padding: 0 20px; 
+    box-sizing: border-box; 
+}
+
+@media screen and (max-width: 799px) {
+    .body {
+        text-align: center;
+    }
+}
+
+@media screen and (max-width: 799px) {
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin: 0 auto; 
+        padding: 0 20px; 
+        
+    }
 }

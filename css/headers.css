@@ -9,8 +9,16 @@
     width: 100%;
     box-sizing: border-box;
     padding: 10px 20px;
+    z-index: 2;
 }
 
+#nav-toggle{
+    display: none;
+}
+
+.menu-toggle{
+    display: none;
+}
 
 nav ul {
     display: flex;
@@ -37,6 +45,26 @@ nav ul li a {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+nav ul li a:hover {
+    background-color: white;
+    color: #606B74;
+}
+
+ul.menu li:last-child a {
+    color: #606B74;
+    border-radius: 8px;
+    border: 2px solid #646D70;
+    background-color: white;
+}
+
+ul.menu li:last-child a:hover {
+    color: white;
+    border-radius: 8px;
+    border: 2px solid #646D70;
+    background-color: #646D70;
+}
+
+
 .logo {
     display: flex;
     justify-content: flex-start; 
@@ -59,11 +87,17 @@ nav ul li a {
     max-width: 50%;
     flex-direction: column; 
     align-items: center; 
+    opacity: 0;
+    animation: fadeInLeft 1s ease-out forwards; 
+    animation-delay: 0.5s; 
 }
 
 .hero__actions {
     display: flex;
     gap: 10px;
+    opacity: 0; 
+    animation: fadeInUp 1s ease-out forwards; 
+    animation-delay: 1s; 
 }
 
 .watch__text {
@@ -81,6 +115,14 @@ nav ul li a {
     display: flex;
     align-items: center;
     justify-content: center;
+    max-width: 100px; 
+    max-height: 100px; 
+    border-radius: 50%; 
+    transition: box-shadow 0.3s ease, background-color 0.3s ease; 
+}
+
+.play__button:hover {
+    box-shadow: 0px 0px 20px rgba(94, 92, 92, 0.5); 
 }
 
 .play__button img {
@@ -106,9 +148,193 @@ nav ul li a {
     justify-content: space-between;
 }
 
-ul.menu li:last-child a {
-    color: #606B74;
-    border-radius: 8px;
-    border: 2px solid #646D70;
-    background-color: white;
+@media screen and (max-width: 780px) {
+    .header {
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: absolute; 
+        padding: 10px 20px;
+        top: 0; 
+        left: 0;
+        width: 100%;
+        box-sizing:border-box;
+        z-index: 2;
+    }
+
+    .header.menu-active {
+        background-color: rgba(96, 107, 116, 0.8);
+    }
+
+    .header .menu {
+        display: none; 
+    }
+    
+    .header.menu-active .menu {
+        display: flex; 
+        flex-direction: column;
+        align-items: center;
+        position: absolute;
+        top: 50px;
+        left: 0;
+        width: 100%;
+        background-color: rgba(96, 107, 116, 0.8);
+        transition: top 1s;
+        list-style: none;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+    }
+
+    .logo {
+        position:relative;
+        left: 0;
+        z-index: 3;
+    }
+
+    .menu-toggle {
+        position: relative;
+        display: block;
+        width: 30px;
+        height: 26px;
+        background: transparent;
+        border-top: 4px solid;
+        border-bottom: 4px solid;
+        color: #fff;
+        cursor: pointer;
+        transition: all 0.25s ease-in-out;
+    }
+
+    .menu-toggle:before,
+    .menu-toggle:after {
+        content: "";
+        display: block;
+        width: 100%;
+        height: 4px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        background: currentColor;
+        transform: translate(-50%, -50%);
+        transition: transform 0.25s ease-in-out;
+    }
+
+    input[type="checkbox"] {
+        display: none;
+    }
+
+    input[type="checkbox"]:checked + .menu-toggle {
+        border-color: transparent;
+    }
+
+    input[type="checkbox"]:checked + .menu-toggle:before {
+        transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    input[type="checkbox"]:checked ~ .menu {
+        top: 0;
+    }
+
+    input[type="checkbox"]:checked + .menu-toggle:after {
+        transform: translate(-50%, -50%) rotate(-45deg);
+    }
+
+    .header__nav {
+        position: absolute;
+        top: -100%;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(96, 107, 116, 0.9);
+        transition: top 1s;
+        z-index: 1;
+    }  
+
+    input[type="checkbox"]:checked ~ .header__nav {
+        top: 50px;
+    }
+
+    .menu {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: absolute;
+        top: 50px;
+        left: 0;
+        width: 100%;
+        background-color: rgba(96, 107, 116, 0.9);
+        transition: top 1s;
+        list-style: none;
+        text-align: center;
+        margin: 0;
+    }
+
+    .menu li {
+        margin: 10px 0;
+        overflow: hidden;
+    }
+
+    .menu li a {
+        text-decoration: none;
+        font-size: 24px;
+        color: white;
+    }
+
+    nav ul {
+        display: block;
+        list-style: none;
+        margin: 0;
+        padding: 50px 0;
+    }
+
+    nav ul li {
+        margin: 15px 0;
+    }
+
+    nav ul li a {
+        font-size: 16px;
+        padding: 10px 20px;
+        text-decoration: none;
+        color: white;
+    }
+
+    .hero__text {
+        max-width: 100%;
+        text-align: center;
+        align-items: center; 
+    }
+    
+    .hero__actions {
+        justify-content: center;
+        flex-direction:row; 
+        align-items: center;
+    }
+    
+    .watch__text {
+        margin-bottom: 10px; 
+    }
+    
+    .play__button img {
+        display: block;
+        width: 100px;
+        height: auto;
+    }
+    
+    .small__title {
+        font-size: 18px;
+        color: rgb(215, 206, 206);
+    }
+    
+    .large__title {
+        font-size: 38px;
+        color: white;
+        font-family: "Merriweather";
+    }
+    
+    .hero__content {
+        display:inline;
+        align-items: center;
+        justify-content: space-between;
+    }
 }

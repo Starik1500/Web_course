@@ -8,10 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&display=swap"
         rel="stylesheet">
-
     <link rel="stylesheet" href="css/styles.css">
-
-
 </head>
 
 <body>
@@ -21,16 +18,21 @@
                 <div class="logo">
                     <img src="images/Logo horizontal.png">
                 </div>
-                <nav>
+                <nav class="Sidebar__menu">
                     <ul class="menu">
-                        <li><a href="#">Modellen</a></li>
-                        <li><a href="#">Kopen</a></li>
-                        <li><a href="#">Huren</a></li>
-                        <li><a href="#">Nieuws</a></li>
-                        <li><a href="#">Contact</a></li>
+                        <li><a class="Header__link" href="#">Modellen</a></li>
+                        <li><a class="Header__link" href="#">Kopen</a></li>
+                        <li><a class="Header__link" href="#">Huren</a></li>
+                        <li><a class="Header__link" href="#">Nieuws</a></li>
+                        <li><a class="Header__link" href="#">Contact</a></li>
                     </ul>
                 </nav>
-            </div>
+                <input type="checkbox" id="nav-toggle">
+                <label for="nav-toggle" class="menu-toggle">
+                    <div class="menu-button"></div>
+                </label>
+                </div>
+            <script src="script.js"></script>
         </div>
         <div class="container">
             <div class="hero__content">
@@ -131,8 +133,8 @@
     </section>
 
     <footer>
-        <p><a href="mailto:info@eco-cabins.com">info@eco-cabins.com</a></p>
-        <img src="images/Logo horizontal.png">
-        <p><a href="#">Cookies</a> 
-        <a href="#">Privacy Policy</a></p>
+        <p><a href="mailto:info@eco-cabins.com">info@eco-cabins.com</a></p><br>
+        <img src="images/Logo horizontal.png"><br>
+        <p><a href="#">Cookies</a></p><br>
+        <p><a href="#">Privacy Policy</a></p>
     </footer>
