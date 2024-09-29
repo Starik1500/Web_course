@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF8">
+
+<head>
+    <title>Planes</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+    <div class="header">
+        <div class="header_container">
+            <div class="left-side">
+                <h1 class="title">Літачки</h1>
+                <ul id="nav">
+                    <li><a href="#">Літаки</a></li>
+                    <li><a href="#">Створити свій літак</a></li>
+                </ul>
+            </div>
+            <div class="right-side">
+                <input type="search" id="find_input" placeholder="Пошук..." />
+                <button id="find_button" type="submit" class="btn">Пошук</button>
+                <button id="cancel_button" type="reset" class="btn">Стерти</button>
+            </div>
+        </div>
+    </div>
+    <div class="main_part">
+        <div class="container">
+            <div class="grid">
+                <div class="Side__managing">
+                    <h2 class="title">Фільтр та загальні дані</h2>
+                    <div class="sorting-container">
+                        <label for="sort_select" class="sorting-label">Сортувати за:</label>
+                        <select id="sort_select" class="sort-select">
+                            <option value="default">За замовчуванням</option>
+                            <option value="name">Назва</option>
+                            <option value="fuel">Кількість палива</option>
+                        </select>
+                    </div>
+                    <p id="summary_passengers" class="summary-text">Загальна кількість пасажирів: <span
+                            id="passenger_count">0</span></p>
+                    <p id="summary_volumetanks" class="summary-text"></p>
+                </div>
+                <ul id="plane_container" class="card-container">
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="script.js"></script>
+</body>
+
+</html>
