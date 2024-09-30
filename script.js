@@ -1,5 +1,8 @@
 let planes = [
-  { name: "Boeing 747", passengers: 416, fuelCapacity: 183380, image: '/images/boeing_747.png' },
+  { name: "Boeing 747", passengers: 416, fuelCapacity: 238840, image: '/images/boeing_747.png' },
+  { name: "Boeing 777", passengers: 396, fuelCapacity: 181283, image: '/images/boeing_777.png' },
+  { name: "Boeing 787", passengers: 242, fuelCapacity: 126206, image: '/images/boeing_787.png' },
+  { name: "Airbus A350", passengers: 350, fuelCapacity: 156000, image: '/images/airbus_a350.png' },
   { name: "Airbus A380", passengers: 555, fuelCapacity: 320000, image: '/images/airbus_a380.png' },
   { name: "Cessna 172", passengers: 4, fuelCapacity: 212, image: '/images/cessna_172.png' },
   { name: "Concorde", passengers: 100, fuelCapacity: 119500, image: '/images/concorde.png' }
@@ -23,8 +26,8 @@ function displayPlanes(planeList) {
       <img src="${image}" class="item-card__image" alt="${plane.name}">
       <div class="item-card__body">
           <h3 class="item-card__title">${plane.name}</h3>
-          <p class="item-card__text">Passengers: ${plane.passengers}</p>
-          <p class="item-card__text">Fuel Capacity: ${plane.fuelCapacity} liters</p>
+          <p class="item-card__text">Кількість пасажирів: ${plane.passengers}</p>
+          <p class="item-card__text">Об'єм палива: ${plane.fuelCapacity} літрів</p>
       </div>
   `;
       planeContainer.appendChild(planeItem);

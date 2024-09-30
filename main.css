@@ -1,5 +1,5 @@
 body{
-    background-color: rgb(11, 11, 125);
+    background-color: #08244a;
     color: white;
 }
 
@@ -10,7 +10,7 @@ body{
 }
 
 .header {
-    background-color: black;
+    background-color: #040d1b;
     position: absolute; 
     top: 0; 
     left: 0;
@@ -48,18 +48,7 @@ body{
 
 #nav li a {
     text-decoration: none;
-    color: #333;
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto; 
-    padding: 0 20px; 
-    box-sizing: border-box; 
+    color: #ddd;
 }
 
 .right-side {
@@ -78,14 +67,14 @@ body{
     padding: 5px 15px;
     margin-left: 5px;
     cursor: pointer;
-    background-color: #007bff;
-    color: white;
+    background-color: #C3CBDD;
+    color: black;
     border: none;
     border-radius: 4px;
 }
 
 .right-side .btn:hover {
-    background-color: #0056b3;
+    background-color: #AFBAD2;
 }
 
 .main_part {
