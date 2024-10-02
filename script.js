@@ -16,27 +16,29 @@ const findButton = document.getElementById('find_button');
 const cancelButton = document.getElementById('cancel_button');
 const sortSelect = document.getElementById('sort_select');
 
+let filteredPlanes = [...planes];
+
 function displayPlanes(planeList) {
   planeContainer.innerHTML = ''; 
   planeList.forEach(plane => {
-      let planeItem = document.createElement('li');
-      planeItem.classList.add('item-card');
-      let image = plane.image ? plane.image : '/images/boeing_747.png';
-      planeItem.innerHTML =  `
+    let planeItem = document.createElement('li');
+    planeItem.classList.add('item-card');
+    let image = plane.image ? plane.image : '/images/boeing_747.png';
+    planeItem.innerHTML = `
       <img src="${image}" class="item-card__image" alt="${plane.name}">
       <div class="item-card__body">
           <h3 class="item-card__title">${plane.name}</h3>
           <p class="item-card__text">Кількість пасажирів: ${plane.passengers}</p>
           <p class="item-card__text">Об'єм палива: ${plane.fuelCapacity} літрів</p>
       </div>
-  `;
-      planeContainer.appendChild(planeItem);
+    `;
+    planeContainer.appendChild(planeItem);
   });
 }
 
-function calculateSummary() {
-  let totalPassengers = planes.reduce((acc, plane) => acc + plane.passengers, 0);
-  let totalFuelCapacity = planes.reduce((acc, plane) => acc + plane.fuelCapacity, 0);
+function calculateSummary(planeList) {
+  let totalPassengers = planeList.reduce((acc, plane) => acc + plane.passengers, 0);
+  let totalFuelCapacity = planeList.reduce((acc, plane) => acc + plane.fuelCapacity, 0);
 
   passengerCountSpan.textContent = totalPassengers;
   summaryVolumeTanks.textContent = `Загальний обсяг баків: ${totalFuelCapacity} літрів`;
@@ -44,19 +46,22 @@ function calculateSummary() {
 
 function searchPlanes() {
   let query = findInput.value.trim().toLowerCase();
-  let filteredPlanes = planes.filter(plane => plane.name.toLowerCase().includes(query));
+  filteredPlanes = planes.filter(plane => plane.name.toLowerCase().includes(query));
   displayPlanes(filteredPlanes);
+  calculateSummary(filteredPlanes);
 }
 
 function clearSearch() {
   findInput.value = '';
-  displayPlanes(planes); 
+  filteredPlanes = [...planes];
+  displayPlanes(filteredPlanes); 
+  calculateSummary(filteredPlanes); 
 }
 
 function sortPlanes() {
   let selectedValue = sortSelect.value;
-  
-  let sortedPlanes = [...planes]; 
+
+  let sortedPlanes = [...filteredPlanes];
 
   if (selectedValue === 'name') {
       sortedPlanes.sort((a, b) => a.name.localeCompare(b.name));
@@ -72,4 +77,4 @@ cancelButton.addEventListener('click', clearSearch);
 sortSelect.addEventListener('change', sortPlanes); 
 
 displayPlanes(planes);
-calculateSummary();
+calculateSummary(planes);
