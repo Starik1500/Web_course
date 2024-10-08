@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+
+<head>
+    <title>Створити свій літак</title>
+    <link rel="stylesheet" href="../main.css">
+</head>
+
+<body>
+    <div class="header">
+        <div class="header_container">
+            <div class="left-side">
+                <h1 class="title">Літачки</h1>
+                <ul id="nav">
+                    <li><a href="../index.html">Мої літаки</a></li>
+                    <li><a href="create_plane.html">Створити свій літак</a></li>
+                </ul>
+            </div>
+            <div class="right-side">
+                <input type="search" id="find_input" placeholder="Пошук..." />
+                <button id="find_button" type="submit" class="btn">Пошук</button>
+                <button id="cancel_button" type="reset" class="btn">Стерти</button>
+            </div>
+        </div>
+    </div>
+    <div class="main_part">
+        <div class="container">
+            <div class="Title">
+                <h1 class="title">Створити свій літачок</h1>
+                <form class="sorting-container" id="planeForm">
+                    <label for="p_name">Назва:</label><br>
+                    <input type="text" id="pname" name="p_name" required><br>
+                    <label for="p_passengers">Кількість пасажирів:</label><br>
+                    <input type="number" id="ppassengers" name="p_passengers" min="0" required><br>
+                    <label for="p_oil">Об'єм палива:</label><br>
+                    <input type="number" id="poil" name="p_oil" required min="0"><br>
+                    <button type="button" id="submitPlane">Опублікувати</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="../js/create_plane.js"></script>
+</body>
+
+</html>

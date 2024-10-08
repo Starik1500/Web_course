@@ -1,10 +1,6 @@
-let planes = [
-  { name: "Boeing 747", passengers: 416, fuelCapacity: 238840, image: '/images/boeing_747.png' },
-  { name: "Boeing 777", passengers: 396, fuelCapacity: 181283, image: '/images/boeing_777.png' },
+let planes = JSON.parse(localStorage.getItem('planes')) || [
   { name: "Boeing 787", passengers: 242, fuelCapacity: 126206, image: '/images/boeing_787.png' },
-  { name: "Airbus A350", passengers: 350, fuelCapacity: 156000, image: '/images/airbus_a350.png' },
   { name: "Airbus A380", passengers: 555, fuelCapacity: 320000, image: '/images/airbus_a380.png' },
-  { name: "Cessna 172", passengers: 4, fuelCapacity: 212, image: '/images/cessna_172.png' },
   { name: "Concorde", passengers: 100, fuelCapacity: 119500, image: '/images/concorde.png' }
 ];
 
@@ -21,19 +17,35 @@ let filteredPlanes = [...planes];
 function displayPlanes(planeList) {
   planeContainer.innerHTML = ''; 
   planeList.forEach(plane => {
-    let planeItem = document.createElement('li');
-    planeItem.classList.add('item-card');
-    let image = plane.image ? plane.image : '/images/boeing_747.png';
-    planeItem.innerHTML = `
-      <img src="${image}" class="item-card__image" alt="${plane.name}">
-      <div class="item-card__body">
-          <h3 class="item-card__title">${plane.name}</h3>
-          <p class="item-card__text">Кількість пасажирів: ${plane.passengers}</p>
-          <p class="item-card__text">Об'єм палива: ${plane.fuelCapacity} літрів</p>
-      </div>
-    `;
-    planeContainer.appendChild(planeItem);
+      let planeItem = document.createElement('li');
+      planeItem.classList.add('item-card');
+      let image = plane.image ? plane.image : '/images/boeing_747.png';
+      planeItem.innerHTML = `
+          <img src="${image}" class="item-card__image" alt="${plane.name}">
+          <div class="item-card__body">
+              <h3 class="item-card__title">${plane.name}</h3>
+              <p class="item-card__text">Кількість пасажирів: ${plane.passengers}</p>
+              <p class="item-card__text">Об'єм палива: ${plane.fuelCapacity} літрів</p>
+              <button class="item-card__edit-button">
+              <a href="html/edit_plane.html?id=${plane.name}&passengers=${plane.passengers}&fuel=${plane.fuelCapacity}">Змінити</a>
+              </button>
+              <button class="item-card__delete-button">Видалити</button>
+          </div>
+      `;
+      const deleteButton = planeItem.querySelector('.item-card__delete-button');
+      deleteButton.addEventListener('click', () => deletePlane(plane.name));
+      
+      planeContainer.appendChild(planeItem);
   });
+}
+
+function deletePlane(name) {
+  planes = planes.filter(plane => plane.name !== name);
+  filteredPlanes = planes;
+  localStorage.setItem('planes', JSON.stringify(planes));
+  displayPlanes(filteredPlanes);
+  calculateSummary(filteredPlanes); 
+  console.log(`Літак ${name} видалено`);
 }
 
 function calculateSummary(planeList) {
