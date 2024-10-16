@@ -1,30 +1,37 @@
+const planeForm = document.getElementById('planeForm');
 const pnameInput = document.getElementById('pname');
 const ppassengersInput = document.getElementById('ppassengers');
 const poilInput = document.getElementById('poil');
+const submitButton = document.getElementById('submitPlane');
 
-document.getElementById('submitPlane').addEventListener('click', () => {
-    const name = pnameInput.value.trim();
-    const passengers = parseInt(ppassengersInput.value);
-    const fuelCapacity = parseInt(poilInput.value);
+async function createPlane(event) {
+    event.preventDefault();
 
-    let planes = JSON.parse(localStorage.getItem('planes')) || [];
-    if (planes.some(plane => plane.name.toLowerCase() === name.toLowerCase())) {
-        alert('Літак з такою назвою вже існує!');
-        return;
+    const newPlane = {
+        name: pnameInput.value, 
+        passengers: parseInt(ppassengersInput.value), 
+        fuelCapacity: parseInt(poilInput.value), 
+        image: '/images/boeing_747.png' 
+    };
+
+    try {
+        const response = await fetch('/planes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newPlane)
+        });
+
+        if (response.ok) {
+            alert('Літак успішно створено!');
+            planeForm.reset();
+        } else {
+            alert('Виникла помилка при створенні літака');
+        }
+    } catch (error) {
+        console.error('Error creating plane:', error);
     }
+}
 
-    if (!name || passengers < 0 || fuelCapacity < 0 || isNaN(passengers) || isNaN(fuelCapacity)) {
-        alert('Будь ласка, заповніть всі поля коректно. Кількість пасажирів і об\'єм пального не можуть бути від\'ємними!');
-        return;
-    }
-
-    const newPlane = { name, passengers, fuelCapacity, image: '/images/boeing_777.png' };
-
-    planes.push(newPlane);
-
-    localStorage.setItem('planes', JSON.stringify(planes));
-
-    alert('Ваш літак успішно створений');
-
-    window.location.href = '/index.html';
-});
+submitButton.addEventListener('click', createPlane);

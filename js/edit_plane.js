@@ -1,41 +1,61 @@
 const urlParams = new URLSearchParams(window.location.search);
 const planeName = urlParams.get('id');
+const pnameInput = document.getElementById('pname');
+const ppassengersInput = document.getElementById('ppassengers');
+const poilInput = document.getElementById('poil');
+const submitEditButton = document.getElementById('submitEdit');
 
-let planes = JSON.parse(localStorage.getItem('planes')) || [];
+async function fetchPlane() {
+    try {
+        const response = await fetch(`/planes/${planeName}`);
+        if (response.ok) {
+            const plane = await response.json();
 
-const planeToEdit = planes.find(plane => plane.name === planeName);
-
-if (planeToEdit) {
-    document.getElementById('pname').value = planeToEdit.name;
-    document.getElementById('ppassengers').value = planeToEdit.passengers;
-    document.getElementById('poil').value = planeToEdit.fuelCapacity;
+            pnameInput.value = plane.name;
+            ppassengersInput.value = plane.passengers;
+            poilInput.value = plane.fuelCapacity;
+        } else {
+            alert('Не вдалося завантажити дані про літак');
+        }
+    } catch (error) {
+        console.error('Error fetching plane:', error);
+    }
 }
 
-document.getElementById('submitEdit').addEventListener('click', function() {
-    const newName = document.getElementById('pname').value.trim();
-    const newPassengers = parseInt(document.getElementById('ppassengers').value);
-    const newFuelCapacity = parseInt(document.getElementById('poil').value);
+async function updatePlane(event) {
+    event.preventDefault(); 
 
-    if (planes.some(plane => plane.name.toLowerCase() === newName.toLowerCase() && plane.name !== planeName)) {
-        alert('Літак з такою назвою вже існує!');
-        return;
-    }
+    const updatedPlane = {
+        name: pnameInput.value.trim(),
+        passengers: parseInt(ppassengersInput.value),
+        fuelCapacity: parseInt(poilInput.value)
+    };
 
-    if (!newName || newPassengers < 0 || newFuelCapacity < 0 || isNaN(newPassengers) || isNaN(newFuelCapacity)) {
+    if (!updatedPlane.name || updatedPlane.passengers < 0 || updatedPlane.fuelCapacity < 0 || isNaN(updatedPlane.passengers) || isNaN(updatedPlane.fuelCapacity)) {
         alert('Будь ласка, заповніть всі поля коректно. Кількість пасажирів і об\'єм пального не можуть бути від\'ємними!');
         return;
     }
 
-    planeToEdit.name = newName;
-    planeToEdit.passengers = newPassengers;
-    planeToEdit.fuelCapacity = newFuelCapacity;
+    try {
+        const response = await fetch(`/planes/${planeName}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedPlane)
+        });
 
-    localStorage.setItem('planes', JSON.stringify(planes));
+        if (response.ok) {
+            alert('Параметри літака успішно змінені');
+            window.location.href = '/index.html';
+        } else {
+            alert('Не вдалося оновити літак');
+        }
+    } catch (error) {
+        console.error('Error updating plane:', error);
+    }
+}
 
-    alert('Параметри літачка успішно змінені');
+submitEditButton.addEventListener('click', updatePlane);
 
-    window.location.href = '/index.html';
-});
-
-document.querySelector('button[type="button"]').addEventListener('click', function() {
-});
+fetchPlane();
