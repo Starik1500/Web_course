@@ -1,0 +1,21 @@
+#main_s {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 50px;
+    background-color: #f4f4f4;
+    text-align: left;
+  }
+  
+  .text-container {
+    flex: 1;
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+  
+  .image {
+    width: 500px;
+    height: auto;
+    object-fit: cover;
+  }
+  

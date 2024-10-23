@@ -1,0 +1,40 @@
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    background: #000000;
+    color: #fff;
+    height: 4rem;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  nav {
+    font-size: 1rem;
+    display: flex;
+  }
+  
+  a {
+    margin: 0 1rem;
+    color: #fff;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.3s;
+  }
+  
+  a:hover {
+    color: #ffcc00;
+  }
+  
+  input[type="search"] {
+    visibility: hidden;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #ccc;
+    width: 200px;
+  }
+  
