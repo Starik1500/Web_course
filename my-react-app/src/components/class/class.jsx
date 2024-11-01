@@ -1,9 +1,9 @@
 import React from 'react';
-import './other.css';
+import './class.css';
 
-const Other_section = () => {
+const Class_section = () => {
   return (
-    <section id="other_s">
+    <section id="class_s">
       <h2>Our Aircraft Models</h2>
       <p>Explore our premium selection of aircraft available for sale.</p>
       <div className="image-row">
@@ -35,9 +35,9 @@ const Other_section = () => {
         </div>
       </div>
 
-      <button className="button">Contact Us</button>
+      <button className="button">View More</button>
     </section>
   );
 };
 
-export default Other_section;
+export default Class_section;

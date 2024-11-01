@@ -29,8 +29,13 @@ header {
     color: #ffcc00;
   }
   
+  .active {
+    font-weight: bold;
+    color: blue; 
+  }
+
   input[type="search"] {
-    visibility: hidden;
+    visibility: visible;
     padding: 0.5rem;
     font-size: 1rem;
     border-radius: 0.5rem;
@@ -38,3 +43,6 @@ header {
     width: 200px;
   }
   
+  .header-hide-search input[type="search"] {
+    visibility:hidden;
+  }
