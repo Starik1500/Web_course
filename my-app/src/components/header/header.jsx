@@ -1,8 +1,11 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import './header.css';
 
-const Header = () => {
+const Header = ({onSearch}) => {
+  const location = useLocation();
+  const isCatalogPage = location.pathname === '/catalog';
+
   return (
     <header className="header">
       <h1>Airplane Sales Company</h1>
@@ -11,10 +14,15 @@ const Header = () => {
         <NavLink to="/catalog" activeClassName="active">Catalog</NavLink>
         <NavLink to="/cart" activeClassName="active">Cart</NavLink>
       </nav>
-      <input
-        type="search"
-        placeholder="Search..."
-      />
+      {isCatalogPage ? (
+        <input
+          type="search"
+          placeholder="Search..."
+          onChange={onSearch}
+        />
+      ) : (
+        <div className="search-placeholder"></div> 
+      )}
     </header>
   );
 };

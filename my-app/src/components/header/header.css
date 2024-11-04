@@ -43,6 +43,7 @@ header {
     width: 200px;
   }
   
-  .header-hide-search input[type="search"] {
-    visibility:hidden;
+  .search-placeholder {
+    width: 200px; /* Ширина інпуту пошуку */
+    height: 40px; /* Висота, щоб відповідала висоті інпуту */
   }

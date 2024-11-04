@@ -6,7 +6,7 @@ import Footer from '../../footer/footer.jsx';
 const Home_page = () => {
     return (
     <div>
-      <Header showSearch={true}/>
+      <Header/>
       <Main_section />
       <Class_section />
       <Footer />

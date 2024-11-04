@@ -1,0 +1,21 @@
+.items-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    width: 100%;
+    padding: 20px;
+  }
+  
+  .item {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .item img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+  }
+  
