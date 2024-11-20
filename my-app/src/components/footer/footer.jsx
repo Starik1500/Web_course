@@ -16,7 +16,7 @@ const Footer = () => {
           <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class='iconLink'>
             <img src="/img/twitter.png" alt="Twitter" class='icon' />
           </a>
-          <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" class='iconLink'>
+          <a href="https://.com" target="_blank" rel="noopener noreferrer" class='iconLink'>
             <img src="/img/odnoklassniki.png" alt="Odnoklassniki" class='icon' />
           </a>
         </div>

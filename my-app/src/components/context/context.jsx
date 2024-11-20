@@ -1,60 +1,62 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import { fetchItems } from '../../api.js';
 
 export const ItemContext = createContext();
 
 export const useItemContext = () => {
-    return useContext(ItemContext); 
-  };
+    return useContext(ItemContext);
+};
 
 export const ItemProvider = ({ children }) => {
-  const initialItems = [
-    { id: 1, img: '/img/Airbus A220.jpg', name: 'Airbus A220', price: '$10', category: 'Regional' },
-    { id: 2, img: '/img/Boeing 737.jpg', name: 'Boeing 737', price: '$15', category: 'Commercial' },
-    { id: 3, img: '/img/Boeing 777.jpg', name: 'Boeing 777', price: '$20', category: 'Commercial' },
-    { id: 4, img: '/img/tapok.jpg', name: 'Tapok', price: '$100', category: 'Military' },
-  ];
+    const [items, setItems] = useState([]);
+    const [filteredItems, setFilteredItems] = useState([]);
+    const [priceFilter, setPriceFilter] = useState('price');
+    const [categoryFilter, setCategoryFilter] = useState('category');
+    const [searchText, setSearchText] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
 
-  const [items] = useState(initialItems);
-  const [filteredItems, setFilteredItems] = useState(initialItems);
-  const [priceFilter, setPriceFilter] = useState('price');
-  const [categoryFilter, setCategoryFilter] = useState('category');
-
-  const handleSearch = (searchText) => {
-    const filtered = items.filter(item => item.name.toLowerCase().includes(searchText.toLowerCase()));
-    setFilteredItems(filtered);
+    const getItems = async (filters = {}) => {
+      setIsLoading(true);
+      try {
+          const items = await fetchItems({searchText: filters.searchText || searchText,
+            priceFilter: filters.priceFilter || priceFilter,
+            categoryFilter: filters.categoryFilter || categoryFilter}); 
+          setItems(items);
+          setFilteredItems(items); 
+      } catch (error) {
+          console.error('Error loading items:', error);
+      } finally {
+          setIsLoading(false);
+      }
   };
 
-  const applyFilters = () => {
-    let newFilteredItems = [...items];
+    useEffect(() => {
+        getItems();
+    }, []);
 
-    if (categoryFilter && categoryFilter !== 'category') {
-      newFilteredItems = newFilteredItems.filter(item => item.category === categoryFilter);
-    }
+    const handleSearch = (text) => {
+        setSearchText(text.trim().toLowerCase());
+        getItems();
+    };
 
-    if (priceFilter && priceFilter !== 'price') {
-      newFilteredItems.sort((a, b) => 
-        priceFilter === 'Low to High'
-          ? parseFloat(a.price.slice(1)) - parseFloat(b.price.slice(1))
-          : parseFloat(b.price.slice(1)) - parseFloat(a.price.slice(1))
-      );
-    }
+    const applyFilters = () => {
+        getItems();
+    };
 
-    setFilteredItems(newFilteredItems);
-  };
-
-  return (
-    <ItemContext.Provider value={{
-      items,
-      filteredItems,
-      setFilteredItems,
-      priceFilter,
-      setPriceFilter,
-      categoryFilter,
-      setCategoryFilter,
-      handleSearch,
-      applyFilters
-    }}>
-      {children}
-    </ItemContext.Provider>
-  );
+    return (
+        <ItemContext.Provider value={{
+            items,
+            filteredItems,
+            setFilteredItems,
+            priceFilter,
+            setPriceFilter,
+            categoryFilter,
+            setCategoryFilter,
+            handleSearch,
+            applyFilters,
+            isLoading
+        }}>
+            {children}
+        </ItemContext.Provider>
+    );
 };

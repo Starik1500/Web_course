@@ -1,25 +1,77 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import Header from '../header/header.jsx';
 import Footer from '../footer/footer.jsx';
-import { useParams, Link} from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { addToCartApi } from '../../redux/actions.js'; 
 import './item.css';
+import { fetchItemById } from '../../api.js';
 
 const ItemPage = () => {
-  const { id } = useParams();
-  const [item, setItem] = useState(null);
+  const { id } = useParams(); 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [item, setItem] = useState(null); 
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState(null);
+
+  const [selectedOption, setSelectedOption] = useState('white');
+  const [quantity, setQuantity] = useState(1);
+  const [totalPrice, setTotalPrice] = useState(0);
 
   useEffect(() => {
-    const items = [
-      { id: 1, img: '/img/Airbus A220.jpg', name: 'Airbus A220', price: '$10' },
-      { id: 2, img: '/img/Boeing 737.jpg', name: 'Boeing 737', price: '$15' },
-      { id: 3, img: '/img/Boeing 777.jpg', name: 'Boeing 777', price: '$20' },
-      { id: 4, img: '/img/tapok.jpg', name: 'Tapok', price: '$100' },
-    ];
-    const selectedItem = items.find(item => item.id === parseInt(id));
-    setItem(selectedItem);
+    const fetchItem = async () => {
+      try {
+        const data = await fetchItemById(id);
+        const priceValue = parseFloat(data.price) || 0;
+        setItem(data);
+        setError(null);
+        setTotalPrice(priceValue);
+      } catch (error) {
+        setError('Item not found or an error occurred while fetching data.');
+        console.error('Error fetching item:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchItem();
   }, [id]);
 
-  if (!item) return <p>Loading...</p>;
+  const handleOptionChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
+
+  const handleQuantityChange = (event) => {
+    const newQuantity = parseInt(event.target.value)  || 1;
+    setQuantity(newQuantity);
+    if (item) {
+      const itemPrice = parseFloat(item.price) || 0;
+      setTotalPrice(itemPrice * newQuantity);
+    }
+  };
+
+  const handleAddToCart = () => {
+    if (item) {
+      const cartItem = {
+        user_adress: 1,
+        item_id: item.id,
+        quantity,
+        selected_option: selectedOption,
+      };
+
+      if (cartItem.quantity > 10) {
+        alert('Quantity cannot exceed 10 items');
+        return;
+      }
+      
+      dispatch(addToCartApi(cartItem)); 
+      alert('Item added to cart!');
+    }
+  };
+
+  if (loading) return <p>Loading...</p>; 
+  if (error) return <p>{error}</p>;
 
   return (
     <div>
@@ -29,12 +81,30 @@ const ItemPage = () => {
           <img src={item.img} alt={item.name} className="item-image" />
           <div className="item-details">
             <h1>{item.name}</h1>
-            <p className="item-page-price">{item.price}</p>
+            <p className="item-page-price">Price: ${totalPrice.toFixed(2)}</p>
+            
+            <div className="select-container">
+              <label htmlFor="option-select">Item mode:</label>
+              <select id="option-select" value={selectedOption} onChange={handleOptionChange}>
+                <option value="white">White</option>
+                <option value="nigga">Nigga</option>
+              </select>
+            </div>
+            
+            <div className="select-container">
+              <label htmlFor="quantity-select">Quantity:</label>
+              <select id="quantity-select" value={quantity} onChange={handleQuantityChange}>
+                {[...Array(10).keys()].map((num) => (
+                  <option key={num + 1} value={num + 1}>{num + 1}</option>
+                ))}
+              </select>
+            </div>
+
             <div className="button-container">
-              <Link to="/catalog">
-                <button className="button">Back</button>
-              </Link>
-              <button className="button">Add to Cart</button>
+            <button onClick={() => navigate(-1)} className="button">
+                Back
+              </button>
+              <button onClick={handleAddToCart} className="button">Add to Cart</button>
             </div>
           </div>
         </div>
