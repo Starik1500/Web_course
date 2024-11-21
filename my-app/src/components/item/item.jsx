@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Header from '../header/header.jsx';
 import Footer from '../footer/footer.jsx';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -11,6 +11,7 @@ const ItemPage = () => {
   const { id } = useParams(); 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const cart = useSelector((state) => state.cart.items);
   const [item, setItem] = useState(null); 
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null);
@@ -53,6 +54,15 @@ const ItemPage = () => {
 
   const handleAddToCart = () => {
     if (item) {
+      const currentCartQuantity = cart.reduce((total, cartItem) => {
+        return cartItem.item_id === item.id ? total + cartItem.quantity : total;
+      }, 0);
+
+      if (currentCartQuantity + quantity > 10) {
+        alert('Cannot add more than 10 items of this product to the cart.');
+        return;
+      }
+
       const cartItem = {
         user_adress: 1,
         item_id: item.id,

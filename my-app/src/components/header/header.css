@@ -44,6 +44,6 @@ header {
   }
   
   .search-placeholder {
-    width: 200px; /* Ширина інпуту пошуку */
-    height: 40px; /* Висота, щоб відповідала висоті інпуту */
+    width: 200px; 
+    height: 40px; 
   }

@@ -52,6 +52,14 @@ const CartPage = () => {
     dispatch(updateQuantityApi(userId, id, quantity));
   };
 
+  const handleContinue = () => {
+    if (cartItems.length === 0) {
+      alert('Your cart is empty. Please add items before proceeding.');
+      return;
+    }
+    navigate('/checkout');
+  };
+
   const totalPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   return (
@@ -91,7 +99,7 @@ const CartPage = () => {
           <button onClick={() => navigate(-1)} className="button">
               Back
             </button>
-            <button className="button">Continue</button>
+            <button onClick={handleContinue} className="button">Continue</button>
           </div>
       <Footer />
     </div>

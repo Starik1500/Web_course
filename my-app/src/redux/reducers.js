@@ -1,4 +1,4 @@
-import { ADD_TO_CART, REMOVE_FROM_CART, UPDATE_QUANTITY, FETCH_CART } from './actions';
+import { ADD_TO_CART, REMOVE_FROM_CART, UPDATE_QUANTITY, FETCH_CART, CLEAR_CART } from './actions';
 
 const initialState = {
   items: [], 
@@ -18,6 +18,11 @@ const cartReducer = (state = initialState, action) => {
             ? { ...item, quantity: action.payload.quantity }
             : item
         ),
+      };
+    case CLEAR_CART:
+      return {
+        ...state,
+        items: [],
       };
     case FETCH_CART:  
       return { ...state, items: action.payload };

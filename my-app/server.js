@@ -158,6 +158,28 @@ app.put('/api/cart/:user_adress/:id', (req, res) => {
   });
 });
 
+app.delete('/api/cart/clear/:user_adress', (req, res) => {
+  let { user_adress } = req.params;
+  user_adress = Number(user_adress);
+  
+  if (isNaN(user_adress)) {
+    console.error('Invalid user_adress:', req.params.user_adress);
+    return res.status(400).json({ error: 'Invalid user_adress value' });
+  }
+  const query = 'DELETE FROM cart WHERE user_adress = ?';
+  db.query(query, [user_adress], (err, results) => {
+    if (err) {
+      console.error('Error clearing cart:', err);
+      return res.status(500).json({ error: 'Error clearing cart' });
+    }
+    
+    if (results.affectedRows > 0) {
+      res.status(200).json({ message: 'Cart cleared successfully' });
+    } else {
+      res.status(404).json({ message: 'Cart not found for this user' });
+    }
+  });
+});
 
 app.delete('/api/cart/:user_adress/:id', (req, res) => {
     const { user_adress, id } = req.params;
@@ -176,6 +198,7 @@ app.delete('/api/cart/:user_adress/:id', (req, res) => {
     }
   });
 });
+
 
 app.listen(PORT, () => {
     console.log(`Сервер працює на http://localhost:${PORT}`);

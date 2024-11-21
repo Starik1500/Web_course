@@ -2,6 +2,7 @@ export const ADD_TO_CART = 'ADD_TO_CART';
 export const REMOVE_FROM_CART = 'REMOVE_FROM_CART';
 export const UPDATE_QUANTITY = 'UPDATE_QUANTITY';
 export const FETCH_CART = 'FETCH_CART';
+export const CLEAR_CART = 'CLEAR_CART';
 
 export const addToCart = (cartItem) => ({
   type: ADD_TO_CART,
@@ -66,6 +67,33 @@ export const updateQuantityApi = (user_id, id, quantity) => async (dispatch) => 
     }
   } catch (error) {
     console.error('Error updating quantity:', error);
+  }
+};
+
+export const clearCart = (user_adress) => async (dispatch) => {
+  console.log('Received user_adress:', user_adress); // Перевірте це
+  if (!user_adress || isNaN(user_adress)) {
+    console.error('Invalid user_adress:', user_adress);
+    alert('Invalid user address provided.');
+    return;
+  }
+  try {
+    console.log('Clearing cart for user_adress:', user_adress);
+    const response = await fetch(`http://localhost:5000/api/cart/clear/${user_adress}`, {
+      method: 'DELETE',
+    });
+
+    if (response.ok) {
+      dispatch({ type: CLEAR_CART }); 
+      console.log('Cart cleared in database and Redux');
+    } else {
+      const errorData = await response.json();
+      console.error('Error clearing cart:', response.statusText);
+      alert('Failed to clear cart: ' + (errorData.error || 'Unknown error'));
+    }
+  } catch (error) {
+    console.error('Error clearing cart:', error);
+    alert('An error occurred while clearing the cart.');
   }
 };
 
