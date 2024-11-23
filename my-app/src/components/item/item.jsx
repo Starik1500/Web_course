@@ -55,7 +55,9 @@ const ItemPage = () => {
   const handleAddToCart = () => {
     if (item) {
       const currentCartQuantity = cart.reduce((total, cartItem) => {
-        return cartItem.item_id === item.id ? total + cartItem.quantity : total;
+        return cartItem.item_id === item.id && cartItem.selected_option === selectedOption
+          ? total + cartItem.quantity
+          : total;
       }, 0);
 
       if (currentCartQuantity + quantity > 10) {
