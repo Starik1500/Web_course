@@ -19,6 +19,8 @@ const ItemPage = () => {
   const [selectedOption, setSelectedOption] = useState('white');
   const [quantity, setQuantity] = useState(1);
   const [totalPrice, setTotalPrice] = useState(0);
+  const user = JSON.parse(localStorage.getItem('user'));
+  const userId = user ? user.userId : null;
 
   useEffect(() => {
     const fetchItem = async () => {
@@ -53,9 +55,17 @@ const ItemPage = () => {
   };
 
   const handleAddToCart = () => {
+    if (!userId) {
+      alert('You must be logged in to add items to the cart.');
+      navigate('/login');
+      return;
+    }
+    
     if (item) {
       const currentCartQuantity = cart.reduce((total, cartItem) => {
-        return cartItem.item_id === item.id ? total + cartItem.quantity : total;
+        return cartItem.item_id === item.id && cartItem.selected_option === selectedOption
+          ? total + cartItem.quantity
+          : total;
       }, 0);
 
       if (currentCartQuantity + quantity > 10) {
@@ -64,7 +74,7 @@ const ItemPage = () => {
       }
 
       const cartItem = {
-        user_adress: 1,
+        user_adress: userId,
         item_id: item.id,
         quantity,
         selected_option: selectedOption,

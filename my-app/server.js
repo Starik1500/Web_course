@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2');
+const bcrypt = require('bcrypt');
 
 const app = express();
 const PORT = 5000;
@@ -18,6 +19,68 @@ const db = mysql.createConnection({
 db.connect(err => {
     if (err) throw err;
     console.log('Підключено до MySQL');
+});
+
+app.post('/api/login', (req, res) => {
+  console.log('Login request received:', req.body);
+  const { email, password } = req.body;
+
+  const loginQuery = 'SELECT * FROM users WHERE email = ?';
+  db.query(loginQuery, [email], (err, results) => {
+    console.log('Database query results:', results); 
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).json({ error: 'Server error' });
+    }
+
+    if (results.length === 0) {
+      console.log('User not found');
+      return res.status(400).json({ error: 'User not found' });
+    }
+
+    const storedHashedPassword = results[0].password;
+    bcrypt.compare(password, storedHashedPassword, (err, isMatch) => {
+      console.log('Password comparison result:', isMatch); 
+      if (err) {
+        console.error('Bcrypt comparison error:', err);
+        return res.status(500).json({ error: 'Server error' });
+      }
+
+      if (!isMatch) {
+        console.log('Incorrect password');
+        return res.status(400).json({ error: 'Incorrect password' });
+      }
+
+      console.log('Login successful');
+      res.status(200).json({
+        message: 'Login successful',
+        userId: results[0].id,
+        email: results[0].email,
+      });
+    });
+  });
+});
+
+
+
+app.post('/api/signup', (req, res) => {
+  const { firstName, lastName, email, password } = req.body;
+  
+  bcrypt.hash(password, 10, (err, hashedPassword) => {
+      if (err) {
+          console.error('Error hashing password:', err);
+          return res.status(500).json({ error: 'Error hashing password' });
+      }
+
+      const insertQuery = 'INSERT INTO users (first_name, last_name, email, password) VALUES (?, ?, ?, ?)';
+      db.query(insertQuery, [firstName, lastName, email, hashedPassword], (err, results) => {
+          if (err) {
+              console.error('Error registering user:', err);
+              return res.status(500).json({ error: 'Error registering user' });
+          }
+          res.status(200).json({ message: 'User registered successfully' });
+      });
+  });
 });
 
 app.get('/api/planes', (req, res) => {

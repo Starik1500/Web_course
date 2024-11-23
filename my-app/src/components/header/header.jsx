@@ -1,5 +1,6 @@
 import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import SignOutButton from '../sign_out_button/sign_out';
 import './header.css';
 
 const Header = ({onSearch}) => {
@@ -21,7 +22,7 @@ const Header = ({onSearch}) => {
           onChange={onSearch}
         />
       ) : (
-        <div className="search-placeholder"></div> 
+        <SignOutButton />
       )}
     </header>
   );

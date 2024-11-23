@@ -36,7 +36,14 @@ const CheckoutPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const user_adress = 1;
+  const user = JSON.parse(localStorage.getItem('user'));
+  const user_adress = user ? user.userId : null;
+
+  if (!user_adress) {
+    console.error('User not logged in. Redirecting to login.');
+    navigate('/login'); 
+    return null;
+  }
 
   return (
     <React.Fragment>
@@ -52,7 +59,7 @@ const CheckoutPage = () => {
         }}
         validationSchema={validationSchema}
         onSubmit={(values) => {
-          console.log(values);
+          console.log('Submitted values:', values);
           dispatch(clearCart(user_adress));
           console.log('Dispatching clearCart with user_adress:', user_adress);
           navigate('/success');

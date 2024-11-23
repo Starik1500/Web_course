@@ -13,9 +13,16 @@ const CartPage = () => {
   const navigate = useNavigate();
   const cartItems = useSelector(state => state.cart.items);
   const dispatch = useDispatch();
+  const user = JSON.parse(localStorage.getItem('user'));
+  const userId = user ? user.userId : null;
 
   useEffect(() => {
-    const userId = 1;
+    if (!userId) {
+      setError('User not logged in. Please log in to view your cart.');
+      setLoading(false);
+      return;
+    }
+
     const fetchCartItems = async () => {
       try {
         await dispatch(fetchCart(userId)); 
@@ -27,17 +34,25 @@ const CartPage = () => {
     };
     
     fetchCartItems();
-  }, [dispatch]);
+  }, [dispatch, userId]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
   const handleRemoveFromCart = (id) => {
-    const userId = 1; 
+    if (!userId) {
+      alert('You must be logged in to remove items from the cart.');
+      return;
+    }
     dispatch(removeFromCartApi(userId, id));
   };
 
   const handleQuantityChange = (id, quantity) => {
+    if (!userId) {
+      alert('You must be logged in to update item quantity.');
+      return;
+    }
+    
     if (quantity < 1) {
       handleRemoveFromCart(id);
       return;
