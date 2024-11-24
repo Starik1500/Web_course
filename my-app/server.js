@@ -5,12 +5,13 @@ const bcrypt = require('bcrypt');
 
 const app = express();
 const PORT = 5000;
+const HOST = 'localhost';
 
 app.use(cors());
 app.use(express.json());
 
 const db = mysql.createConnection({
-    host: 'localhost',
+    host: HOST,
     user: 'root',
     password: '123456789',
     database: 'planesdb'
@@ -264,5 +265,5 @@ app.delete('/api/cart/:user_adress/:id', (req, res) => {
 
 
 app.listen(PORT, () => {
-    console.log(`Сервер працює на http://localhost:${PORT}`);
+    console.log(`Сервер працює на http://${HOST}:${PORT}`);
 });

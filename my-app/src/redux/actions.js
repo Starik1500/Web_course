@@ -1,3 +1,11 @@
+import {
+  addToCartRequest,
+  updateQuantityRequest,
+  clearCartRequest,
+  removeFromCartRequest,
+  fetchCartRequest,
+} from './api_with_fetch';
+
 export const ADD_TO_CART = 'ADD_TO_CART';
 export const REMOVE_FROM_CART = 'REMOVE_FROM_CART';
 export const UPDATE_QUANTITY = 'UPDATE_QUANTITY';
@@ -19,19 +27,14 @@ export const updateQuantity = (id, quantity) => ({
   payload: { id, quantity },
 });
 
-
 export const addToCartApi = (cartItem) => async (dispatch) => {
   try {
     console.log('Sending cartItem:', cartItem);
-    const response = await fetch('http://localhost:5000/api/cart', {  
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(cartItem),
-    });
+    const response = await addToCartRequest(cartItem);
 
     if (response.ok) {
       const data = await response.json();
-      dispatch(addToCart(cartItem)); 
+      dispatch(addToCart(cartItem));
       console.log('Item added to database and Redux:', data);
     } else {
       console.error('Error adding item to cart:', response.statusText);
@@ -52,15 +55,11 @@ export const updateQuantityApi = (user_id, id, quantity) => async (dispatch) => 
   }
 
   try {
-    const response = await fetch(`http://localhost:5000/api/cart/${user_id}/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ quantity }),
-    });
+    const response = await updateQuantityRequest(user_id, id, quantity);
 
     if (response.ok) {
       const data = await response.json();
-      dispatch(updateQuantity(id, quantity)); 
+      dispatch(updateQuantity(id, quantity));
       console.log('Quantity updated successfully:', data);
     } else {
       console.error('Error updating quantity:', response.statusText);
@@ -71,7 +70,7 @@ export const updateQuantityApi = (user_id, id, quantity) => async (dispatch) => 
 };
 
 export const clearCart = (user_adress) => async (dispatch) => {
-  console.log('Received user_adress:', user_adress); // Перевірте це
+  console.log('Received user_adress:', user_adress);
   if (!user_adress || isNaN(user_adress)) {
     console.error('Invalid user_adress:', user_adress);
     alert('Invalid user address provided.');
@@ -79,12 +78,10 @@ export const clearCart = (user_adress) => async (dispatch) => {
   }
   try {
     console.log('Clearing cart for user_adress:', user_adress);
-    const response = await fetch(`http://localhost:5000/api/cart/clear/${user_adress}`, {
-      method: 'DELETE',
-    });
+    const response = await clearCartRequest(user_adress);
 
     if (response.ok) {
-      dispatch({ type: CLEAR_CART }); 
+      dispatch({ type: CLEAR_CART });
       console.log('Cart cleared in database and Redux');
     } else {
       const errorData = await response.json();
@@ -99,12 +96,10 @@ export const clearCart = (user_adress) => async (dispatch) => {
 
 export const removeFromCartApi = (user_adress, id) => async (dispatch) => {
   try {
-    const response = await fetch(`http://localhost:5000/api/cart/${user_adress}/${id}`, {
-      method: 'DELETE',
-    });
+    const response = await removeFromCartRequest(user_adress, id);
 
     if (response.ok) {
-      dispatch(removeFromCart(id)); 
+      dispatch(removeFromCart(id));
       console.log('Item removed from cart');
     } else {
       console.error('Error removing item from cart:', response.statusText);
@@ -116,8 +111,8 @@ export const removeFromCartApi = (user_adress, id) => async (dispatch) => {
 
 export const fetchCart = (user_adress) => async (dispatch) => {
   try {
-    const response = await fetch(`http://localhost:5000/api/cart/${user_adress}`);
-    
+    const response = await fetchCartRequest(user_adress);
+
     if (response.ok) {
       const cartItems = await response.json();
       dispatch({ type: FETCH_CART, payload: cartItems });

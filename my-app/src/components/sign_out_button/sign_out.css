@@ -1,0 +1,23 @@
+.sign-out-button {
+    background-color: #ffffff;
+    color: #000000;
+    border: none;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .sign-out-button:hover {
+    background-color: #e04344;
+  }
+  
+  .sign-out-button:active {
+    background-color: #c73a3c;
+  }
+  
+  .sign-out-button:focus {
+    outline: 2px solid #ff999a;
+  }
+  

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import './sign_out.css';
 
 const SignOutButton = () => {
   const navigate = useNavigate();
@@ -13,7 +14,9 @@ const SignOutButton = () => {
   };
 
   return (
-    <button onClick={handleSignOut}>Sign Out</button>
+    <button className="sign-out-button" onClick={handleSignOut}>
+      Sign Out
+    </button>
   );
 };
 

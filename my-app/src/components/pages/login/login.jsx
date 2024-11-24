@@ -47,11 +47,12 @@ const LoginPage = () => {
   };
 
   return (
-    <div>
-      <Header />
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
+    <React.Fragment>
+    <Header />
+    <div className="login-container">
+      <div className="login-header">Login</div>
+      <form onSubmit={handleSubmit} className="login-form">
+        <div className="form-group">
           <label htmlFor="email">Email</label>
           <input
             type="email"
@@ -61,7 +62,7 @@ const LoginPage = () => {
             required
           />
         </div>
-        <div>
+        <div className="form-group">
           <label htmlFor="password">Password</label>
           <input
             type="password"
@@ -71,15 +72,18 @@ const LoginPage = () => {
             required
           />
         </div>
-        <button type="submit">Login</button>
+        <div className="form-actions">
+          <button type="submit" className="btn-primary">Login</button>
+        </div>
       </form>
       {errorMessage && <div className="error">{errorMessage}</div>}
-      <p>
+      <p className="signup-redirect">
         Don't have an account?{' '}
-        <button onClick={() => navigate('/signup')}>Sign Up</button>
+        <button className="btn-link" onClick={() => navigate('/signup')}>Sign Up</button>
       </p>
-      <Footer />
     </div>
+    <Footer />
+    </React.Fragment>
   );
 };
 

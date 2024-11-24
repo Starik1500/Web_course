@@ -4,25 +4,25 @@ import './footer.css';
 const Footer = () => {
   return (
     <footer>
-      <div class='content'>
-        <div class='textContainer'>
+      <div className='content'>
+        <div className='textContainer'>
           <p>Aircraft Sales Company</p>
           <p>Providing top-quality aircraft for commercial and cargo needs. Experience unmatched service and expertise in the aviation industry.</p>
         </div>
-        <div class='iconContainer'>
-          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class='iconLink'>
-            <img src="/img/facebook.png" alt="Facebook" class='icon' />
+        <div className='iconContainer'>
+          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className='iconLink'>
+            <img src="/img/facebook.png" alt="Facebook" className='icon' />
           </a>
-          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class='iconLink'>
-            <img src="/img/twitter.png" alt="Twitter" class='icon' />
+          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className='iconLink'>
+            <img src="/img/twitter.png" alt="Twitter" className='icon' />
           </a>
-          <a href="https://.com" target="_blank" rel="noopener noreferrer" class='iconLink'>
-            <img src="/img/odnoklassniki.png" alt="Odnoklassniki" class='icon' />
+          <a href="https://.com" target="_blank" rel="noopener noreferrer" className='iconLink'>
+            <img src="/img/odnoklassniki.png" alt="Odnoklassniki" className='icon' />
           </a>
         </div>
       </div>
-      <div class='ruler'></div>
-      <p class='copyright'>© 2024 Aircraft Sales Company</p>
+      <div className='ruler'></div>
+      <p className='copyright'>© 2024 Aircraft Sales Company</p>
     </footer>
   );
 };

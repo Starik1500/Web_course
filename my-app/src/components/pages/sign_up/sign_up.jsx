@@ -5,7 +5,7 @@ import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './sign_up.css'
+import './sign_up.css';
 
 const validationSchema = Yup.object({
   firstName: Yup.string()
@@ -28,6 +28,7 @@ const validationSchema = Yup.object({
 const SignUpPage = () => {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState('');
+
   const handleSignUp = async (values) => {
     try {
       const response = await axios.post('http://localhost:5000/api/signup', {
@@ -46,9 +47,10 @@ const SignUpPage = () => {
   };
 
   return (
-    <div>
-      <Header />
-      <h2>Sign Up</h2>
+    <React.Fragment>
+    <Header />
+    <div className="sign-up-container">
+      <div className="sign-up-header">Sign Up</div>
       <Formik
         initialValues={{
           firstName: '',
@@ -61,47 +63,51 @@ const SignUpPage = () => {
         onSubmit={handleSignUp}
       >
         <Form>
-          <div>
+          <div className="form-group">
             <label htmlFor="firstName">First Name</label>
             <Field type="text" id="firstName" name="firstName" />
             <ErrorMessage name="firstName" component="div" className="error" />
           </div>
 
-          <div>
+          <div className="form-group">
             <label htmlFor="lastName">Last Name</label>
             <Field type="text" id="lastName" name="lastName" />
             <ErrorMessage name="lastName" component="div" className="error" />
           </div>
 
-          <div>
+          <div className="form-group">
             <label htmlFor="email">Email</label>
             <Field type="email" id="email" name="email" />
             <ErrorMessage name="email" component="div" className="error" />
           </div>
 
-          <div>
+          <div className="form-group">
             <label htmlFor="password">Password</label>
             <Field type="password" id="password" name="password" />
             <ErrorMessage name="password" component="div" className="error" />
           </div>
 
-          <div>
+          <div className="form-group">
             <label htmlFor="confirmPassword">Confirm Password</label>
             <Field type="password" id="confirmPassword" name="confirmPassword" />
             <ErrorMessage name="confirmPassword" component="div" className="error" />
           </div>
 
-          <button type="submit">Sign Up</button>
+          <div className="form-actions">
+            <button type="submit" className="btn-primary">Sign Up</button>
+          </div>
         </Form>
       </Formik>
 
       {errorMessage && <div className="error">{errorMessage}</div>}
 
-      <p>
-        Already have an account? <button onClick={() => navigate('/login')}>Log In</button>
+      <p className="login-redirect">
+        Already have an account?{' '}
+        <button className="btn-link" onClick={() => navigate('/login')}>Log In</button>
       </p>
-      <Footer />
     </div>
+    <Footer />
+    </React.Fragment>
   );
 };
 
