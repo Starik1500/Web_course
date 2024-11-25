@@ -16,7 +16,11 @@ const validationSchema = Yup.object({
     .max(50, 'Last name must be less than 50 characters'),
   email: Yup.string()
     .email('Invalid email format')
-    .required('Email is required'),
+    .required('Email is required')
+    .test(
+      'is-valid-email',
+      'Email must include "@" and a domain',
+      (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)),
   password: Yup.string()
     .required('Password is required')
     .min(6, 'Password must be at least 6 characters'),

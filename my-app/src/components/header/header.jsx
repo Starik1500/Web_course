@@ -1,10 +1,18 @@
-import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import SignOutButton from '../sign_out_button/sign_out';
 import './header.css';
 
 const Header = ({ onSearch }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      navigate('/login');
+    }
+  }, [navigate]);
 
   const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
 

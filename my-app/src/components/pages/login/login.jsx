@@ -23,66 +23,64 @@ const LoginPage = () => {
         password,
       });
 
-      if (response.data.message === 'Login successful') {
-        const user = {
-          email: response.data.email,
-          userId: response.data.userId,
-        };
-        localStorage.setItem('user', JSON.stringify(user));
+      if (response.data.message === 'Успішний вхід') {
+        const { token } = response.data;
+
+        localStorage.setItem('authToken', token);
+
+        const decodedToken = JSON.parse(atob(token.split('.')[1]));
+        const userId = decodedToken.id;
+        localStorage.setItem('user_id', userId);
+
         dispatch({ type: 'CLEAR_CART' });
-        try {
-          const cartResponse = await axios.get(`http://localhost:5000/api/cart/${user.userId}`);
-          dispatch({ type: 'FETCH_CART', payload: cartResponse.data });
-        } catch (cartError) {
-          console.error('Error fetching cart:', cartError);
-        }
+
         navigate('/home');
       } else {
-        setErrorMessage('Login failed. Please try again.');
+        setErrorMessage('Помилка входу. Спробуйте ще раз.');
       }
     } catch (loginError) {
-      console.error('Login error:', loginError);
-      setErrorMessage('Invalid email or password.');
+      console.error('Помилка входу:', loginError);
+      setErrorMessage('Невірний email або пароль.');
     }
   };
 
   return (
     <React.Fragment>
-    <Header />
-    <div className="login-container">
-      <div className="login-header">Login</div>
-      <form onSubmit={handleSubmit} className="login-form">
-        <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-actions">
-          <button type="submit" className="btn-primary">Login</button>
-        </div>
-      </form>
-      {errorMessage && <div className="error">{errorMessage}</div>}
-      <p className="signup-redirect">
-        Don't have an account?{' '}
-        <button className="btn-link" onClick={() => navigate('/signup')}>Sign Up</button>
-      </p>
-    </div>
-    <Footer />
+      <Header />
+      <div className="login-container">
+        <div className="login-header">Login</div>
+        <form onSubmit={handleSubmit} className="login-form">
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-actions">
+            <button type="submit" className="btn-primary">Login</button>
+          </div>
+        </form>
+        {errorMessage && <div className="error">{errorMessage}</div>}
+        <p className="signup-redirect">
+          Don't have an account?{' '}
+          <button className="btn-link" onClick={() => navigate('/signup')}>Sign Up</button>
+        </p>
+      </div>
+      <Footer />
     </React.Fragment>
   );
 };

@@ -11,13 +11,13 @@ const CartPage = () => {
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
-  const cartItems = useSelector(state => state.cart.items);
+  const cartItems = useSelector((state) => state.cart.items);
   const dispatch = useDispatch();
-  const user = JSON.parse(localStorage.getItem('user'));
-  const userId = user ? user.userId : null;
+
+  const token = localStorage.getItem('authToken'); 
 
   useEffect(() => {
-    if (!userId) {
+    if (!token) {
       setError('User not logged in. Please log in to view your cart.');
       setLoading(false);
       return;
@@ -25,47 +25,46 @@ const CartPage = () => {
 
     const fetchCartItems = async () => {
       try {
-        await dispatch(fetchCart(userId)); 
+        await dispatch(fetchCart(token)); 
       } catch (err) {
-        setError('Failed to fetch cart');
+        console.error('Failed to fetch cart:', err);
+        setError('Failed to fetch cart. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
-    
+
     fetchCartItems();
-  }, [dispatch, userId]);
+  }, [dispatch, token]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
-  const handleRemoveFromCart = (id) => {
-    if (!userId) {
-      alert('You must be logged in to remove items from the cart.');
-      return;
-    }
-    dispatch(removeFromCartApi(userId, id));
-  };
-
-  const handleQuantityChange = (id, quantity) => {
-    if (!userId) {
-      alert('You must be logged in to update item quantity.');
-      return;
-    }
-    
-    if (quantity < 1) {
-      handleRemoveFromCart(id);
-      return;
+  const handleRemoveFromCart = async (id) => {
+    if (!token) {
+        alert('You must be logged in to remove items from the cart.');
+        return;
     }
 
-    if (quantity > 10) {
-      alert('Maximum quantity is 10');
-      return;
+    try {
+        await dispatch(removeFromCartApi(token, id));
+    } catch (err) {
+        console.error('Failed to remove item from cart:', err);
+    }
+};
+
+  const handleQuantityChange = async (id, quantity) => {
+    if (!token) {
+        alert('You must be logged in to update item quantity.');
+        return;
     }
 
-    const userId = 1; 
-    dispatch(updateQuantityApi(userId, id, quantity));
-  };
+    try {
+        await dispatch(updateQuantityApi(token, id, quantity));
+    } catch (err) {
+        console.error('Failed to update item quantity:', err);
+    }
+};
 
   const handleContinue = () => {
     if (cartItems.length === 0) {
@@ -94,12 +93,17 @@ const CartPage = () => {
                 <div>
                   <label>
                     Quantity:
-                    <input type="number" value={item.quantity} min="1" max = "10"
-                      onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value))}/>
+                    <input
+                      type="number"
+                      value={item.quantity}
+                      min="1"
+                      max="10"
+                      onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value))}
+                    />
                   </label>
                   <button onClick={() => handleRemoveFromCart(item.id)}>Remove</button>
                 </div>
-                <p>${ (item.price * item.quantity).toFixed(2) }</p>
+                <p>${(item.price * item.quantity).toFixed(2)}</p>
               </li>
             ))}
           </ul>
@@ -111,11 +115,13 @@ const CartPage = () => {
         )}
       </div>
       <div className="cart-button-container">
-          <button onClick={() => navigate(-1)} className="button">
-              Back
-            </button>
-            <button onClick={handleContinue} className="button">Continue</button>
-          </div>
+        <button onClick={() => navigate(-1)} className="button">
+          Back
+        </button>
+        <button onClick={handleContinue} className="button">
+          Continue
+        </button>
+      </div>
       <Footer />
     </div>
   );

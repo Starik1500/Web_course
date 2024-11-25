@@ -2,10 +2,12 @@ const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = 5000;
 const HOST = 'localhost';
+const SECRET_KEY = 'simple_key';
 
 app.use(cors());
 app.use(express.json());
@@ -21,6 +23,24 @@ db.connect(err => {
     if (err) throw err;
     console.log('Підключено до MySQL');
 });
+
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (!token) {
+    console.error('Токен не надано');
+    return res.status(401).json({ error: 'Токен не надано' });
+  }
+
+  jwt.verify(token, SECRET_KEY, (err, user) => {
+    if (err) {
+      console.error('Помилка перевірки токена:', err);
+      return res.status(403).json({ error: 'Недійсний токен' });
+    }
+    req.user = user; 
+    next();
+  });
+};
 
 app.post('/api/login', (req, res) => {
   console.log('Login request received:', req.body);
@@ -52,15 +72,13 @@ app.post('/api/login', (req, res) => {
         return res.status(400).json({ error: 'Incorrect password' });
       }
 
-      console.log('Login successful');
-      res.status(200).json({
-        message: 'Login successful',
-        userId: results[0].id,
-        email: results[0].email,
+      const user = { id: results[0].id, email: results[0].email };
+      const token = jwt.sign(user, SECRET_KEY, { expiresIn: '1h' });
+
+      res.status(200).json({ message: 'Успішний вхід', token });
       });
     });
   });
-});
 
 
 
@@ -84,7 +102,7 @@ app.post('/api/signup', (req, res) => {
   });
 });
 
-app.get('/api/planes', (req, res) => {
+app.get('/api/planes', authenticateToken, (req, res) => {
   const { searchText = '', priceFilter = 'price', categoryFilter = 'category' } = req.query;
   let query = 'SELECT * FROM planes WHERE 1=1';
   const params = [];
@@ -96,26 +114,22 @@ app.get('/api/planes', (req, res) => {
   }
 
   if (categoryFilter && categoryFilter !== 'category') {
-    query += ' AND category = ?';
-    params.push(categoryFilter);
-    } else if (!categoryFilter || categoryFilter === 'category') {
-    query += ''; 
-    }
+      query += ' AND category = ?';
+      params.push(categoryFilter);
+  }
 
   if (priceFilter === 'Low to High') {
-    query += ' ORDER BY price ASC';
-    } else if (priceFilter === 'High to Low') {
-    query += ' ORDER BY price DESC';
-    }
+      query += ' ORDER BY price ASC';
+  } else if (priceFilter === 'High to Low') {
+      query += ' ORDER BY price DESC';
+  }
 
   db.query(query, params, (err, results) => {
-      if (err) {
-          console.error('Error fetching planes:', err);
-          return res.status(500).json({ error: 'Database query failed' });
-      }
+      if (err) return res.status(500).json({ error: 'Помилка запиту до бази даних' });
       res.json(results);
   });
 });
+
 
 app.get('/api/planes/:id', (req, res) => {
     const { id } = req.params;
@@ -134,135 +148,193 @@ app.get('/api/planes/:id', (req, res) => {
     });
 });
 
-app.post('/api/cart', (req, res) => {
-    const { user_adress, item_id, quantity, selected_option } = req.body;
-    console.log('Received data:', req.body)
-    
-    const checkQuery = 'SELECT * FROM cart WHERE user_adress = ? AND item_id = ? AND selected_option = ?';
-    db.query(checkQuery, [user_adress, item_id, selected_option], (err, results) => {
-        if (err) {
-            console.error('Error checking cart:', err);  
-            return res.status(500).json({ error: 'Error checking cart' });
-        }
+app.post('/api/cart', authenticateToken, (req, res) => {
+  const userId = req.user.id;
+  const { item_id, quantity, selected_option } = req.body;
 
-        console.log('Cart check results:', results);
+  db.beginTransaction((err) => {
+      if (err) return res.status(500).json({ error: 'Не вдалося почати транзакцію' });
 
-        if (results.length > 0) {
-          const existingItem = results[0];
-          const totalQuantity = existingItem.quantity + quantity;
-
-          if (totalQuantity > 10) {
-              return res.status(400).json({ error: 'Total quantity cannot exceed 10 items' });
+      const checkQuery = 'SELECT * FROM cart WHERE user_adress = ? AND item_id = ? AND selected_option = ? FOR UPDATE';
+      db.query(checkQuery, [userId, item_id, selected_option], (err, results) => {
+          if (err) {
+              return db.rollback(() => res.status(500).json({ error: 'Помилка запиту до корзини' }));
           }
 
-          const updateQuery = 'UPDATE cart SET quantity = quantity + ? WHERE user_adress = ? AND item_id = ? AND selected_option = ?';
-          db.query(updateQuery, [quantity, user_adress, item_id, selected_option], (err, updateResults) => {
-              if (err) {
-                  console.error('Error updating cart:', err);
-                  return res.status(500).json({ error: 'Error updating cart' });
+          if (results.length > 0) {
+              const totalQuantity = results[0].quantity + quantity;
+
+              if (totalQuantity > 10) {
+                  return db.rollback(() => res.status(400).json({ error: 'Кількість не може перевищувати 10' }));
               }
-              console.log('Cart updated:', updateResults);
-              res.status(200).json({ message: 'Cart updated successfully' });
-          });
-        } else {
-            if (quantity > 10) {
-              return res.status(400).json({ error: 'Quantity cannot exceed 10 items' });
-            }
-            const insertQuery = 'INSERT INTO cart (user_adress, item_id, quantity, selected_option) VALUES (?, ?, ?, ?)';
-            db.query(insertQuery, [user_adress, item_id, quantity, selected_option], (err, insertResults) => {
-                if (err) {
-                    console.error('Error adding item to cart:', err);
-                    return res.status(500).json({ error: 'Error adding item to cart' });
-                }
-                console.log('Item added to cart:', insertResults);
-                res.status(200).json({ message: 'Item added to cart' });
-            });
-        }
-    });
-});
 
-app.get('/api/cart/:user_adress', (req, res) => {
-    const { user_adress } = req.params;
-    const query = `
-    SELECT cart.id, cart.user_adress, cart.item_id, cart.quantity, cart.selected_option, 
-           planes.name, planes.price, planes.img
-    FROM cart
-    JOIN planes ON cart.item_id = planes.id
-    WHERE cart.user_adress = ?;
-  `;
+              const updateQuery = 'UPDATE cart SET quantity = quantity + ? WHERE user_adress = ? AND item_id = ? AND selected_option = ?';
+              db.query(updateQuery, [quantity, userId, item_id, selected_option], (err) => {
+                  if (err) {
+                      return db.rollback(() => res.status(500).json({ error: 'Помилка оновлення корзини' }));
+                  }
 
-  db.query(query, [user_adress], (err, results) => {
-    if (err) {
-      console.error('Error fetching cart:', err);
-      return res.status(500).json({ error: 'Error fetching cart' });
-    }
+                  db.commit((err) => {
+                      if (err) {
+                          return db.rollback(() => res.status(500).json({ error: 'Не вдалося завершити транзакцію' }));
+                      }
+                      res.status(200).json({ message: 'Корзина оновлена' });
+                  });
+              });
+          } else {
+              if (quantity > 10) {
+                  return db.rollback(() => res.status(400).json({ error: 'Кількість не може перевищувати 10' }));
+              }
 
-    res.status(200).json(results);
+              const insertQuery = 'INSERT INTO cart (user_adress, item_id, quantity, selected_option) VALUES (?, ?, ?, ?)';
+              db.query(insertQuery, [userId, item_id, quantity, selected_option], (err) => {
+                  if (err) {
+                      return db.rollback(() => res.status(500).json({ error: 'Помилка додавання до корзини' }));
+                  }
+
+                  db.commit((err) => {
+                      if (err) {
+                          return db.rollback(() => res.status(500).json({ error: 'Не вдалося завершити транзакцію' }));
+                      }
+                      res.status(201).json({ message: 'Товар додано до корзини' });
+                  });
+              });
+          }
+      });
   });
 });
 
-app.put('/api/cart/:user_adress/:id', (req, res) => {
-  const { user_adress, id } = req.params;
+
+app.get('/api/cart/:token', (req, res) => {
+  const { token } = req.params;
+
+  jwt.verify(token, SECRET_KEY, (err, user) => {
+      if (err) {
+          console.error('Помилка перевірки токена:', err);
+          return res.status(403).json({ error: 'Недійсний токен' });
+      }
+
+      const userId = user.id;
+
+      const query = `
+          SELECT cart.id, cart.item_id, cart.quantity, cart.selected_option, 
+                 planes.name, planes.price, planes.img
+          FROM cart
+          JOIN planes ON cart.item_id = planes.id
+          WHERE cart.user_adress = ?;
+      `;
+
+      db.query(query, [userId], (err, results) => {
+          if (err) {
+              console.error('Помилка запиту до корзини:', err);
+              return res.status(500).json({ error: 'Помилка запиту до корзини' });
+          }
+
+          res.status(200).json(results);
+      });
+  });
+});
+
+app.put('/api/cart/:id', authenticateToken, (req, res) => {
+  const userId = req.user.id; 
+  const { id } = req.params; 
   const { quantity } = req.body;
 
-  console.log('Received data for update:', req.body);
+  if (quantity < 1) {
+      return res.status(400).json({ error: 'Кількість не може бути меншою за 1' });
+  }
 
   const updateQuery = 'UPDATE cart SET quantity = ? WHERE user_adress = ? AND id = ?';
-  db.query(updateQuery, [quantity, user_adress, id], (err, results) => {
-    if (err) {
-      console.error('Error updating quantity in cart:', err);
-      return res.status(500).json({ error: 'Error updating quantity in cart' });
-    }
+  db.query(updateQuery, [quantity, userId, id], (err, results) => {
+      if (err) {
+          console.error('Помилка оновлення кількості в корзині:', err);
+          return res.status(500).json({ error: 'Помилка оновлення кількості в корзині' });
+      }
 
-    if (results.affectedRows > 0) {
-      res.status(200).json({ message: 'Quantity updated successfully' });
-    } else {
-      res.status(404).json({ message: 'Item not found in cart' });
-    }
+      if (results.affectedRows > 0) {
+          res.status(200).json({ message: 'Кількість успішно оновлена' });
+      } else {
+          res.status(404).json({ error: 'Товар не знайдено в корзині' });
+      }
   });
 });
 
-app.delete('/api/cart/clear/:user_adress', (req, res) => {
-  let { user_adress } = req.params;
-  user_adress = Number(user_adress);
-  
-  if (isNaN(user_adress)) {
-    console.error('Invalid user_adress:', req.params.user_adress);
-    return res.status(400).json({ error: 'Invalid user_adress value' });
-  }
+
+app.delete('/api/cart/clear', authenticateToken, (req, res) => {
+  const userId = req.user.id;
+
   const query = 'DELETE FROM cart WHERE user_adress = ?';
-  db.query(query, [user_adress], (err, results) => {
-    if (err) {
-      console.error('Error clearing cart:', err);
-      return res.status(500).json({ error: 'Error clearing cart' });
-    }
-    
-    if (results.affectedRows > 0) {
-      res.status(200).json({ message: 'Cart cleared successfully' });
-    } else {
-      res.status(404).json({ message: 'Cart not found for this user' });
-    }
+  db.query(query, [userId], (err, results) => {
+      if (err) return res.status(500).json({ error: 'Помилка очищення корзини' });
+
+      if (results.affectedRows > 0) {
+          res.status(200).json({ message: 'Корзина очищена' });
+      } else {
+          res.status(404).json({ message: 'Корзина не знайдена' });
+      }
   });
 });
 
-app.delete('/api/cart/:user_adress/:id', (req, res) => {
-    const { user_adress, id } = req.params;
-    const query = 'DELETE FROM cart WHERE user_adress = ? AND id = ?';
+app.delete('/api/cart/clear/:token', (req, res) => {
+  const { token } = req.params;
 
-    db.query(query, [user_adress, id], (err, results) => {
-    if (err) {
-      console.error('Error removing item from cart:', err);
-      return res.status(500).json({ error: 'Error removing item from cart' });
-    }
+  jwt.verify(token, SECRET_KEY, (err, user) => {
+      if (err) {
+          console.error('Помилка перевірки токена:', err);
+          return res.status(403).json({ error: 'Недійсний токен' });
+      }
 
-    if (results.affectedRows > 0) {
-      res.status(200).json({ message: 'Item removed from cart' });
-    } else {
-      res.status(404).json({ message: 'Item not found in cart' });
-    }
+      const userId = user.id;
+
+      const clearCartQuery = 'DELETE FROM cart WHERE user_adress = ?';
+      db.query(clearCartQuery, [userId], (err, results) => {
+          if (err) {
+              console.error('Помилка очищення корзини:', err);
+              return res.status(500).json({ error: 'Помилка очищення корзини' });
+          }
+
+          if (results.affectedRows > 0) {
+              res.status(200).json({ message: 'Корзина успішно очищена' });
+          } else {
+              res.status(404).json({ message: 'Корзина вже порожня' });
+          }
+      });
   });
 });
 
+app.post('/api/checkout', authenticateToken, (req, res) => {
+  const userId = req.user.id;
+
+  const clearCartQuery = 'DELETE FROM cart WHERE user_adress = ?';
+  db.query(clearCartQuery, [userId], (err, results) => {
+      if (err) {
+          console.error('Помилка очищення корзини:', err);
+          return res.status(500).json({ error: 'Помилка очищення корзини' });
+      }
+
+      if (results.affectedRows > 0) {
+          res.status(200).json({ message: 'Корзина успішно очищена' });
+      } else {
+          res.status(404).json({ message: 'Корзина вже порожня' });
+      }
+  });
+});
+
+app.delete('/api/cart/:id', authenticateToken, (req, res) => {
+  const userId = req.user.id;
+  const { id } = req.params;
+
+  const deleteQuery = 'DELETE FROM cart WHERE user_adress = ? AND id = ?';
+  db.query(deleteQuery, [userId, id], (err, results) => {
+      if (err) return res.status(500).json({ error: 'Помилка видалення товару з корзини' });
+
+      if (results.affectedRows > 0) {
+          res.status(200).json({ message: 'Товар успішно видалено з корзини' });
+      } else {
+          res.status(404).json({ error: 'Товар не знайдено в корзині' });
+      }
+  });
+});
 
 app.listen(PORT, () => {
     console.log(`Сервер працює на http://${HOST}:${PORT}`);
